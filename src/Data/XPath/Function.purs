@@ -17,62 +17,94 @@ limitations under the License.
 module Data.XPath.Function where
 
 import Prelude
-import Data.XPath.Types (XPath, XPathFunction(..), XPathStep(..), xpath)
-import Data.Maybe (Maybe(..))
 
-position ∷ XPath
-position = xpath (Function Position)
+import Data.Maybe (Maybe, maybe)
+import Data.XPath.AST (Expr(..), FunctionName(..), Selector)
 
-count ∷ XPath → XPath
-count = xpath <<< Function <<< Count
+-- | The `last()` function.
+last :: Expr
+last = FunctionCall (FunctionName "last") []
 
-toString ∷ XPath
-toString = xpath (Function (ToString Nothing))
+-- | The `position()` function.
+position :: Expr
+position = FunctionCall (FunctionName "position") []
 
-toString' ∷ Maybe XPath → XPath
-toString' = xpath <<< Function <<< ToString
+-- | The `count(node-set)` function.
+count :: Selector -> Expr
+count s = FunctionCall (FunctionName "count") [SelectorExpr s]
 
-concat ∷ XPath → XPath → XPath
-concat x y = xpath (Function (Concat x y))
+-- | The `id(any)` function.
+id :: Expr -> Expr
+id e = FunctionCall (FunctionName "id") [e]
 
-startsWith ∷ XPath → XPath → XPath
-startsWith x y = xpath (Function (StartsWith x y))
+-- | The `local-name(node-set?)` function.
+localName :: Maybe Selector -> Expr
+localName ms = FunctionCall (FunctionName "local-name") (maybe [] (pure <<< SelectorExpr) ms)
 
-contains ∷ XPath → XPath → XPath
-contains x y = xpath (Function (Contains x y))
+-- | The `namespace-uri(node-set?)` function.
+namespaceURI :: Maybe Selector -> Expr
+namespaceURI ms = FunctionCall (FunctionName "namespace-uri") (maybe [] (pure <<< SelectorExpr) ms)
 
-substring ∷ XPath → Int → XPath
-substring x start = xpath (Function (Substring x start Nothing))
+-- | The `name(node-set?)` function.
+name :: Maybe Selector -> Expr
+name ms = FunctionCall (FunctionName "name") (maybe [] (pure <<< SelectorExpr) ms)
 
-substring' ∷ XPath → Int → Maybe Int → XPath
-substring' x start length = xpath (Function (Substring x start length))
 
-substringBefore ∷ XPath → XPath → XPath
-substringBefore x y = xpath (Function (SubstringBefore x y))
 
-substringAfter ∷ XPath → XPath → XPath
-substringAfter x y = xpath (Function (SubstringAfter x y))
+string :: Maybe Expr -> Expr
+string mx = FunctionCall (FunctionName "string") (maybe [] pure mx)
 
-substringLength ∷ XPath
-substringLength = xpath (Function (SubstringLength Nothing))
+concat :: Expr -> Expr -> Array Expr -> Expr
+concat x y zs = FunctionCall (FunctionName "concat") ([x, y] <> zs)
 
-substringLength' ∷ Maybe XPath → XPath
-substringLength' = xpath <<< Function <<< SubstringLength
+startsWith :: Expr -> Expr -> Expr
+startsWith x y = FunctionCall (FunctionName "starts-with") [x, y]
 
-normalizeSpace ∷ XPath
-normalizeSpace = xpath (Function (NormalizeSpace Nothing))
+contains :: Expr -> Expr -> Expr
+contains x y = FunctionCall (FunctionName "contains") [x, y]
 
-normalizeSpace' ∷ Maybe XPath → XPath
-normalizeSpace' = xpath <<< Function <<< NormalizeSpace
+substringBefore :: Expr -> Expr -> Expr
+substringBefore x y = FunctionCall (FunctionName "substring-before") [x, y]
 
-not ∷ XPath → XPath
-not = xpath <<< Function <<< Not
+substringAfter :: Expr -> Expr -> Expr
+substringAfter x y = FunctionCall (FunctionName "substring-after") [x, y]
 
-tt ∷ XPath
-tt = xpath (Function True)
+substring :: Expr -> Expr -> Maybe Expr -> Expr
+substring x y mz = FunctionCall (FunctionName "substring") ([x, y] <> maybe [] pure mz)
 
-ff ∷ XPath
-ff = xpath (Function False)
+stringLength :: Maybe Expr -> Expr
+stringLength mx = FunctionCall (FunctionName "string-length") (maybe [] pure mx)
 
-sum ∷ XPath → XPath
-sum = xpath <<< Function <<< Sum
+normalizeSpace :: Maybe Expr -> Expr
+normalizeSpace mx = FunctionCall (FunctionName "normalize-space") (maybe [] pure mx)
+
+translate :: Expr -> Expr -> Expr -> Expr
+translate x y z = FunctionCall (FunctionName "translate") [x, y, z]
+
+
+
+boolean :: Maybe Expr -> Expr
+boolean mx = FunctionCall (FunctionName "boolean") (maybe [] pure mx)
+
+not :: Expr -> Expr
+not x = FunctionCall (FunctionName "not") [x]
+
+lang :: Expr -> Expr
+lang x = FunctionCall (FunctionName "lang") [x]
+
+
+
+number :: Maybe Expr -> Expr
+number mx = FunctionCall (FunctionName "number") (maybe [] pure mx)
+
+sum :: Expr -> Expr
+sum x = FunctionCall (FunctionName "sum") [x]
+
+floor :: Expr -> Expr
+floor x = FunctionCall (FunctionName "floor") [x]
+
+ceil :: Expr -> Expr
+ceil x = FunctionCall (FunctionName "ceil") [x]
+
+round :: Expr -> Expr
+round x = FunctionCall (FunctionName "round") [x]
