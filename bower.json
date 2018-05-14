@@ -15,18 +15,15 @@
     "package.json"
   ],
   "dependencies": {
-    "purescript-lists": "^4.12.0",
-    "purescript-strings": "^3.5.0",
-    "purescript-generics-rep": "^5.4.0"
+    "purescript-lists": "#compiler/0.12",
+    "purescript-strings": "#compiler/0.12",
+    "purescript-generics-rep": "#compiler/0.12"
   },
   "devDependencies": {
-    "purescript-assert": "^3.1.0",
-    "purescript-console": "^3.0.0",
-    "purescript-mote": "^0.2.0",
-    "purescript-mote-runner": "kRITZCREEK/purescript-mote-runner#master",
-    "purescript-const": "^3.2.0"
-  },
-  "resolutions": {
-    "purescript-mote": "^0.2.0"
+    "purescript-assert": "#compiler/0.12",
+    "purescript-console": "#compiler/0.12",
+    "purescript-mote": "cryogenian/purescript-mote#compiler/0.12",
+    "purescript-mote-runner": "cryogenian/purescript-mote-runner#compiler/0.12",
+    "purescript-const": "#compiler/0.12"
   }
 }
